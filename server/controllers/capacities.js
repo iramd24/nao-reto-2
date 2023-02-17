@@ -2,12 +2,16 @@ import capacityMessage from '../models/capacityMessage.js'
 
 export const getCapacities = async (req, res)  => {
     try {
-        const capacitiesCollection  = await capacityMessage.find();
-        console.log(capacitiesCollection);
-
-        res.status(200).json(capacitiesCollection);
+        var query = {rownum: 1};
+        capacityMessage.findOne(query, (error, result) =>  {
+            if(error){
+                res.send(error);
+            }else{
+                res.send(result);
+            }
+        });
     } catch (error) {
-        res.status(404).json({message: error.message});
+        res.status(500).json({message: error.message});
     }
 };
 
@@ -24,5 +28,23 @@ export const updateCapacities = async (req, res)  => {
         res.status(200).json(updateResult);
     } catch (error) {
         res.status(404).json({message: error.message});
+    }
+};
+
+export const uploadCapacities = async (req, res)  => {
+    try {
+        var query = {rownum: 1},
+            update = { capacities: req.body },
+            options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+        capacityMessage.findOneAndUpdate(query, update, options, (error, result) =>  {
+            if(error){
+                res.send(error);
+            }else{
+                res.send({message:"sucessfull"});
+            }
+        });
+    } catch (error) {
+        res.status(500).json({message: error.message});
     }
 };

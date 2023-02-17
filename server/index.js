@@ -8,7 +8,8 @@ import capacityRoutes from './routes/capacities.js';
 import loginRoutes from './routes/loginRoutes.js';
 
 
-import User from './models/user.js'
+import User from './models/user.js';
+import capacityMessage from './models/capacityMessage.js';
 
 
 const app = express();
@@ -36,7 +37,7 @@ app.use('/capacities', capacityRoutes);
 app.use('/login', loginRoutes);
 
 
-app.post('/loginTest', (req, res)  => {
+app.post('/userLogin', (req, res)  => {
     
         const {email,password} =req.body;
          User.findOne({email:email},(err,user)=>{
@@ -50,5 +51,39 @@ app.post('/loginTest', (req, res)  => {
                 res.send("not register")
             }
         });
+});
 
+
+app.get('/getCapacities',  async (req, res)  => {
+    try {
+        var query = {rownum: 1};
+        capacityMessage.findOne(query, (error, result) =>  {
+            if(error){
+                res.send(error);
+            }else{
+                res.send(result);
+            }
+        });
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
+app.post('/uploadCapacities', async (req, res)  => {
+    try {
+        //console.log(req.body);
+        var query = {rownum: 1},
+            update = { capacities: req.body },
+            options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+        capacityMessage.findOneAndUpdate(query, update, options, (error, result) =>  {
+            if(error){
+                res.send(error)
+            }else{
+                res.send({message:"sucessfull"})
+            }
+        });
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
 });

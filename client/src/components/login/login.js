@@ -10,7 +10,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-function Login({ setLoginUser }) {
+function Login() {
     const navigate = useNavigate();
     const [user, setUser] = useState({
         email: "",
@@ -29,15 +29,17 @@ function Login({ setLoginUser }) {
     const login = (e) => {
         e.preventDefault();
         console.log(user.email +" "+user.password);
-        axios.post("http://localhost:5000/loginTest", user)
+        axios.post("http://localhost:5000/userLogin", user)
             .then(res => {
-                alert(res.data.message)
-                setLoginUser(res.data.user)
+                alert(res.data.message);
+                //console.log(res.data.user);
+                localStorage.setItem('user', JSON.stringify(res.data.user));
+                //setLoginUser(res.data.user);
                 navigateToHome();
             }).catch( (err)=>{ console.log(err)});
             /*axios.post("http://localhost:5000/login/userRegister",user )
             .then(res=>console.log(res))*/
-    }
+    };
     return (
         <>
             <Container fluid>
